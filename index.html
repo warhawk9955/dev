@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoolPro CRM - Pool Service Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0077be 0%, #00a8e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #0077be;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pool-icon {
+            font-size: 2em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            color: #0077be;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #00a8e8;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0077be;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            background: #0077be;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #005a8c;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .customer-list {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .customer-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #0077be;
+        }
+
+        .customer-card:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .customer-card.active {
+            background: #cfe9f7;
+            border-left-width: 6px;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #0077be;
+            margin-bottom: 5px;
+        }
+
+        .customer-detail {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .pool-badge {
+            display: inline-block;
+            background: #0077be;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: #0077be;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .service-log {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+
+        .service-date {
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 8px;
+        }
+
+        .chemical-readings {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .reading-box {
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .reading-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .reading-value {
+            font-weight: 600;
+            color: #0077be;
+            font-size: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: linear-gradient(135deg, #0077be, #00a8e8);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="pool-icon">🏊</span> PoolPro CRM</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCustomers">0</div>
+                    <div class="stat-label">Customers</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="thisWeekServices">0</div>
+                    <div class="stat-label">Services This Week</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Customer List Panel -->
+            <div class="panel">
+                <h2>Customers</h2>
+                <button onclick="showNewCustomerForm()" style="width: 100%; margin-bottom: 15px;">+ Add New Customer</button>
+                <div class="customer-list" id="customerList">
+                    <div class="empty-state">No customers yet. Add your first customer to get started!</div>
+                </div>
+            </div>
+
+            <!-- Main Panel -->
+            <div class="panel">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('customer')">Customer Info</button>
+                    <button class="tab" onclick="switchTab('service')">Service Log</button>
+                </div>
+
+                <!-- Customer Info Tab -->
+                <div id="customerTab" class="tab-content active">
+                    <form id="customerForm">
+                        <input type="hidden" id="customerId">
+
+                        <h3 style="color: #0077be; margin-bottom: 15px;">Contact Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Customer Name *</label>
+                                <input type="text" id="customerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone *</label>
+                                <input type="tel" id="customerPhone" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="customerEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Service Day</label>
+                                <select id="serviceDay">
+                                    <option value="">Select day</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Service Address *</label>
+                            <input type="text" id="serviceAddress" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Gate Code / Access Notes</label>
+                            <textarea id="gateCode" placeholder="e.g., Code 1234, Key under mat, Call upon arrival"></textarea>
+                        </div>
+
+                        <h3 style="color: #0077be; margin: 20px 0 15px 0;">Pool Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pool Type</label>
+                                <select id="poolType">
+                                    <option value="Inground">Inground</option>
+                                    <option value="Above Ground">Above Ground</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sanitizer System</label>
+                                <select id="sanitizerType">
+                                    <option value="Chlorine">Chlorine</option>
+                                    <option value="Salt Water">Salt Water</option>
+                                    <option value="Mineral">Mineral System</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pool Size (gallons)</label>
+                                <input type="number" id="poolSize" placeholder="e.g., 20000">
+                            </div>
+                            <div class="form-group">
+                                <label>Monthly Rate ($)</label>
+                                <input type="number" id="monthlyRate" step="0.01" placeholder="e.g., 150.00">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Additional Notes</label>
+                            <textarea id="customerNotes" placeholder="Equipment details, special instructions, etc."></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button type="submit">Save Customer</button>
+                            <button type="button" class="btn-secondary" onclick="clearCustomerForm()">Cancel</button>
+                            <button type="button" class="btn-danger" onclick="deleteCustomer()" id="deleteBtn" style="margin-left: auto; display: none;">Delete Customer</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Service Log Tab -->
+                <div id="serviceTab" class="tab-content">
+                    <div id="serviceLogContent">
+                        <div class="empty-state">Select a customer to log service visits</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let customers = JSON.parse(localStorage.getItem('poolCustomers') || '[]');
+        let serviceLogs = JSON.parse(localStorage.getItem('poolServices') || '[]');
+        let currentCustomerId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCustomerList();
+            updateStats();
+
+            document.getElementById('customerForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveCustomer();
+            });
+        });
+
+        function showNewCustomerForm() {
+            clearCustomerForm();
+            switchTab('customer');
+        }
+
+        function clearCustomerForm() {
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            document.getElementById('deleteBtn').style.display = 'none';
+            currentCustomerId = null;
+
+            // Remove active state from all customer cards
+            document.querySelectorAll('.customer-card').forEach(card => {
+                card.classList.remove('active');
+            });
+        }
+
+        function saveCustomer() {
+            const customerId = document.getElementById('customerId').value;
+
+            const customer = {
+                id: customerId || Date.now().toString(),
+                name: document.getElementById('customerName').value,
+                phone: document.getElementById('customerPhone').value,
+                email: document.getElementById('customerEmail').value,
+                address: document.getElementById('serviceAddress').value,
+                gateCode: document.getElementById('gateCode').value,
+                serviceDay: document.getElementById('serviceDay').value,
+                poolType: document.getElementById('poolType').value,
+                sanitizerType: document.getElementById('sanitizerType').value,
+                poolSize: document.getElementById('poolSize').value,
+                monthlyRate: document.getElementById('monthlyRate').value,
+                notes: document.getElementById('customerNotes').value,
+                createdAt: customerId ? customers.find(c => c.id === customerId).createdAt : new Date().toISOString()
+            };
+
+            if (customerId) {
+                // Update existing
+                const index = customers.findIndex(c => c.id === customerId);
+                customers[index] = customer;
+            } else {
+                // Add new
+                customers.push(customer);
+            }
+
+            localStorage.setItem('poolCustomers', JSON.stringify(customers));
+            renderCustomerList();
+            updateStats();
+            loadCustomer(customer.id);
+
+            alert(customerId ? 'Customer updated!' : 'Customer added!');
+        }
+
+        function loadCustomer(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+
+            currentCustomerId = customerId;
+            document.getElementById('customerId').value = customer.id;
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerPhone').value = customer.phone;
+            document.getElementById('customerEmail').value = customer.email || '';
+            document.getElementById('serviceAddress').value = customer.address;
+            document.getElementById('gateCode').value = customer.gateCode || '';
+            document.getElementById('serviceDay').value = customer.serviceDay || '';
+            document.getElementById('poolType').value = customer.poolType;
+            document.getElementById('sanitizerType').value = customer.sanitizerType;
+            document.getElementById('poolSize').value = customer.poolSize || '';
+            document.getElementById('monthlyRate').value = customer.monthlyRate || '';
+            document.getElementById('customerNotes').value = customer.notes || '';
+            document.getElementById('deleteBtn').style.display = 'block';
+
+            // Highlight active customer
+            document.querySelectorAll('.customer-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-customer-id="${customerId}"]`)?.classList.add('active');
+
+            // Update service log
+            renderServiceLog(customerId);
+        }
+
+        function deleteCustomer() {
+            if (!currentCustomerId) return;
+
+            if (confirm('Are you sure you want to delete this customer? This will also delete all service records.')) {
+                customers = customers.filter(c => c.id !== currentCustomerId);
+                serviceLogs = serviceLogs.filter(s => s.customerId !== currentCustomerId);
+
+                localStorage.setItem('poolCustomers', JSON.stringify(customers));
+                localStorage.setItem('poolServices', JSON.stringify(serviceLogs));
+
+                clearCustomerForm();
+                renderCustomerList();
+                updateStats();
+                document.getElementById('serviceLogContent').innerHTML = '<div class="empty-state">Select a customer to log service visits</div>';
+            }
+        }
+
+        function renderCustomerList() {
+            const listEl = document.getElementById('customerList');
+
+            if (customers.length === 0) {
+                listEl.innerHTML = '<div class="empty-state">No customers yet. Add your first customer to get started!</div>';
+                return;
+            }
+
+            listEl.innerHTML = customers.map(customer => `
+                <div class="customer-card" data-customer-id="${customer.id}" onclick="loadCustomer('${customer.id}')">
+                    <div class="customer-name">${customer.name}</div>
+                    <div class="customer-detail">📍 ${customer.address}</div>
+                    <div class="customer-detail">📞 ${customer.phone}</div>
+                    ${customer.serviceDay ? `<div class="customer-detail">📅 ${customer.serviceDay}s</div>` : ''}
+                    <div style="margin-top: 8px;">
+                        <span class="pool-badge">${customer.poolType}</span>
+                        <span class="pool-badge">${customer.sanitizerType}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        function renderServiceLog(customerId) {
+            const customer = customers.find(c => c.id === customerId);
+            const logs = serviceLogs.filter(s => s.customerId === customerId).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const serviceLogContent = document.getElementById('serviceLogContent');
+
+            serviceLogContent.innerHTML = `
+                <h3 style="color: #0077be; margin-bottom: 15px;">Log New Service Visit</h3>
+                <form id="serviceForm" onsubmit="saveServiceLog(event, '${customerId}')">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Service Date *</label>
+                            <input type="date" id="serviceDate" required value="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                        <div class="form-group">
+                            <label>Time Spent (minutes)</label>
+                            <input type="number" id="timeSpent" placeholder="30">
+                        </div>
+                    </div>
+
+                    <h4 style="color: #0077be; margin: 15px 0 10px 0;">Water Chemistry</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>pH Level</label>
+                            <input type="number" id="phLevel" step="0.1" placeholder="7.4">
+                        </div>
+                        <div class="form-group">
+                            <label>Chlorine (ppm)</label>
+                            <input type="number" id="chlorineLevel" step="0.1" placeholder="2.0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Alkalinity (ppm)</label>
+                            <input type="number" id="alkalinity" placeholder="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Temperature (°F)</label>
+                            <input type="number" id="temperature" placeholder="78">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Chemicals Added</label>
+                        <textarea id="chemicalsAdded" placeholder="e.g., 2 lbs chlorine tabs, 1 qt algaecide"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service Notes</label>
+                        <textarea id="serviceNotes" placeholder="Issues found, repairs needed, equipment status, etc."></textarea>
+                    </div>
+
+                    <button type="submit">Save Service Log</button>
+                </form>
+
+                <h3 style="color: #0077be; margin: 30px 0 15px 0;">Service History</h3>
+                <div id="serviceHistory">
+                    ${logs.length === 0 ? '<div class="empty-state">No service visits logged yet</div>' :
+                        logs.map(log => `
+                            <div class="service-log">
+                                <div class="service-date">📅 ${new Date(log.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                ${log.timeSpent ? `<div class="customer-detail">⏱️ ${log.timeSpent} minutes</div>` : ''}
+
+                                ${log.phLevel || log.chlorineLevel || log.alkalinity || log.temperature ? `
+                                    <div class="chemical-readings">
+                                        ${log.phLevel ? `<div class="reading-box"><div class="reading-label">pH</div><div class="reading-value">${log.phLevel}</div></div>` : ''}
+                                        ${log.chlorineLevel ? `<div class="reading-box"><div class="reading-label">Chlorine</div><div class="reading-value">${log.chlorineLevel}</div></div>` : ''}
+                                        ${log.alkalinity ? `<div class="reading-box"><div class="reading-label">Alkalinity</div><div class="reading-value">${log.alkalinity}</div></div>` : ''}
+                                        ${log.temperature ? `<div class="reading-box"><div class="reading-label">Temp</div><div class="reading-value">${log.temperature}°F</div></div>` : ''}
+                                    </div>
+                                ` : ''}
+
+                                ${log.chemicalsAdded ? `<div style="margin: 10px 0;"><strong>Chemicals:</strong> ${log.chemicalsAdded}</div>` : ''}
+                                ${log.notes ? `<div style="margin: 10px 0;"><strong>Notes:</strong> ${log.notes}</div>` : ''}
+
+                                <button class="btn-danger" style="margin-top: 10px; padding: 6px 12px; font-size: 12px;" onclick="deleteServiceLog('${log.id}', '${customerId}')">Delete</button>
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+
+        function saveServiceLog(event, customerId) {
+            event.preventDefault();
+
+            const serviceLog = {
+                id: Date.now().toString(),
+                customerId: customerId,
+                date: document.getElementById('serviceDate').value,
+                timeSpent: document.getElementById('timeSpent').value,
+                phLevel: document.getElementById('phLevel').value,
+                chlorineLevel: document.getElementById('chlorineLevel').value,
+                alkalinity: document.getElementById('alkalinity').value,
+                temperature: document.getElementById('temperature').value,
+                chemicalsAdded: document.getElementById('chemicalsAdded').value,
+                notes: document.getElementById('serviceNotes').value,
+                createdAt: new Date().toISOString()
+            };
+
+            serviceLogs.push(serviceLog);
+            localStorage.setItem('poolServices', JSON.stringify(serviceLogs));
+
+            renderServiceLog(customerId);
+            updateStats();
+            alert('Service visit logged!');
+        }
+
+        function deleteServiceLog(logId, customerId) {
+            if (confirm('Delete this service log?')) {
+                serviceLogs = serviceLogs.filter(s => s.id !== logId);
+                localStorage.setItem('poolServices', JSON.stringify(serviceLogs));
+                renderServiceLog(customerId);
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCustomers').textContent = customers.length;
+
+            // Count services this week
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const thisWeekServices = serviceLogs.filter(s => new Date(s.date) >= weekAgo).length;
+            document.getElementById('thisWeekServices').textContent = thisWeekServices;
+        }
+    </script>
+</body>
+</html>
